@@ -14,259 +14,91 @@
             --message-out: #2b5278;
             --message-in: #18222d;
         }
-
-        * {
-            box-sizing: border-box;
-        }
-
+        * { box-sizing: border-box; }
         body {
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
+            margin: 0; padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color); color: var(--text-color);
+            height: 100vh; overflow: hidden; display: flex;
         }
-
-        /* Головний контейнер додатку */
-        .app-container {
-            display: flex;
-            width: 100%;
-            height: 100%;
-            position: relative;
-        }
-
-        /* Бічна панель / Список чатів */
+        .app-container { display: flex; width: 100%; height: 100%; position: relative; }
         .sidebar {
-            width: 100%;
-            height: 100%;
-            background-color: var(--chat-bg);
-            display: flex;
-            flex-direction: column;
-            position: absolute;
-            left: 0;
-            top: 0;
-            transition: transform 0.3s ease;
-            z-index: 2;
+            width: 100%; height: 100%; background-color: var(--chat-bg);
+            display: flex; flex-direction: column; position: absolute; left: 0; top: 0;
+            transition: transform 0.3s ease; z-index: 2;
         }
-
-        .sidebar.hidden {
-            transform: translateX(-100%);
-        }
-
+        .sidebar.hidden { transform: translateX(-100%); }
         .sidebar-header {
-            padding: 15px 20px;
-            font-size: 1.3rem;
-            font-weight: bold;
+            padding: 15px 20px; font-size: 1.3rem; font-weight: bold;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            display: flex; justify-content: space-between; align-items: center;
         }
-
-        .chat-list {
-            overflow-y: auto;
-            flex: 1;
-        }
-
+        .chat-list { overflow-y: auto; flex: 1; }
         .chat-item {
-            padding: 14px 20px;
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            transition: background 0.2s;
+            padding: 14px 20px; display: flex; align-items: center; cursor: pointer;
             border-bottom: 1px solid rgba(255, 255, 255, 0.02);
         }
-
-        .chat-item.active, .chat-item:active {
-            background-color: rgba(43, 82, 120, 0.4);
-        }
-
+        .chat-item.active { background-color: rgba(43, 82, 120, 0.4); }
         .avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: var(--accent-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 1.1rem;
-            margin-right: 15px;
-            flex-shrink: 0;
+            width: 50px; height: 50px; border-radius: 50%; background-color: var(--accent-color);
+            display: flex; align-items: center; justify-content: center; font-weight: bold;
+            margin-right: 15px; flex-shrink: 0;
         }
-
-        .chat-info {
-            overflow: hidden;
-            flex: 1;
-        }
-
-        .chat-name {
-            font-weight: 600;
-            font-size: 1.05rem;
-            margin-bottom: 4px;
-        }
-
-        .chat-last-message {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        /* Область розмови (чат) */
+        .chat-info { overflow: hidden; flex: 1; }
+        .chat-name { font-weight: 600; font-size: 1.05rem; margin-bottom: 4px; }
+        .chat-last-message { font-size: 0.9rem; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        
         .chat-area {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            background-color: var(--bg-color);
-            position: absolute;
-            left: 0;
-            top: 0;
-            z-index: 1;
+            width: 100%; height: 100%; display: flex; flex-direction: column;
+            background-color: var(--bg-color); position: absolute; left: 0; top: 0; z-index: 1;
         }
-
         .chat-header {
-            padding: 12px 15px;
-            background-color: var(--chat-bg);
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            height: 60px;
+            padding: 12px 15px; background-color: var(--chat-bg); font-weight: bold;
+            display: flex; align-items: center; gap: 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); height: 60px;
         }
-
-        .back-btn {
-            background: none;
-            border: none;
-            color: var(--text-color);
-            font-size: 1.2rem;
-            cursor: pointer;
-            padding: 5px 10px;
-        }
-
-        .messages-container {
-            flex: 1;
-            padding: 15px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .message {
-            max-width: 75%;
-            padding: 10px 14px;
-            border-radius: 14px;
-            font-size: 0.95rem;
-            line-height: 1.4;
-            word-wrap: break-word;
-        }
-
-        .message.in {
-            background-color: var(--message-in);
-            align-self: flex-start;
-            border-bottom-left-radius: 3px;
-        }
-
-        .message.out {
-            background-color: var(--message-out);
-            align-self: flex-end;
-            border-bottom-right-radius: 3px;
-        }
-
-        /* Панель введення тексту */
-        .chat-input-area {
-            padding: 12px;
-            background-color: var(--chat-bg);
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
+        .back-btn { background: none; border: none; color: var(--text-color); font-size: 1.2rem; cursor: pointer; padding: 5px 10px; }
+        .messages-container { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+        .message { max-width: 75%; padding: 10px 14px; border-radius: 14px; font-size: 0.95rem; line-height: 1.4; word-wrap: break-word; }
+        .message.in { background-color: var(--message-in); align-self: flex-start; border-bottom-left-radius: 3px; }
+        .message.out { background-color: var(--message-out); align-self: flex-end; border-bottom-right-radius: 3px; }
+        
+        .chat-input-area { padding: 12px; background-color: var(--chat-bg); display: flex; gap: 10px; align-items: center; }
         .chat-input-area input {
-            flex: 1;
-            padding: 12px 16px;
-            border-radius: 22px;
-            border: none;
-            background-color: rgba(0, 0, 0, 0.25);
-            color: var(--text-color);
-            font-size: 0.95rem;
-            outline: none;
+            flex: 1; padding: 12px 16px; border-radius: 22px; border: none;
+            background-color: rgba(0, 0, 0, 0.25); color: var(--text-color); font-size: 0.95rem; outline: none;
         }
-
         .chat-input-area button {
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.1rem;
-            flex-shrink: 0;
+            background-color: var(--accent-color); color: white; border: none;
+            width: 44px; height: 44px; border-radius: 50%; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0;
         }
 
-        /* Десктопна адаптація */
         @media (min-width: 768px) {
-            .app-container {
-                max-width: 900px;
-                margin: auto;
-                height: 90vh;
-                border-radius: 12px;
-                overflow: hidden;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            }
-            .sidebar {
-                width: 320px;
-                position: relative;
-                transform: none !important;
-                border-right: 1px solid rgba(255,255,255,0.05);
-            }
-            .chat-area {
-                position: relative;
-                left: auto;
-                top: auto;
-                flex: 1;
-            }
-            .back-btn {
-                display: none;
-            }
+            .app-container { max-width: 900px; margin: auto; height: 90vh; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+            .sidebar { width: 320px; position: relative; transform: none !important; border-right: 1px solid rgba(255,255,255,0.05); }
+            .chat-area { position: relative; left: auto; top: auto; flex: 1; }
+            .back-btn { display: none; }
         }
     </style>
 </head>
 <body>
 
     <div class="app-container">
-        <!-- Список чатів (Sidebar) -->
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <span>Mirror</span>
-                <button onclick="createNewChat()" style="background:none; border:none; color:var(--text-color); font-size:1.4rem; cursor:pointer;" title="Новий чат">+</button>
+                <button onclick="createNewChat()" style="background:none; border:none; color:var(--text-color); font-size:1.4rem; cursor:pointer;">+</button>
             </div>
-            <div class="chat-list">
-                <!-- Динамічно заповнюється скриптом -->
-            </div>
+            <div class="chat-list"></div>
         </div>
 
-        <!-- Область чату (Chat Area) -->
         <div class="chat-area" id="chatArea">
             <div class="chat-header">
-                <button class="back-btn" id="backBtn" onclick="closeChat()">❮</button>
+                <button class="back-btn" onclick="closeChat()">❮</button>
                 <span id="chatTitle">Mirror Dev</span>
             </div>
             
-            <div class="messages-container" id="messages">
-                <div class="message in">Вітаю у твоєму новому месенджері Mirror! Підключено до локального дата-центру в Termux.</div>
-            </div>
+            <div class="messages-container" id="messages"></div>
 
             <div class="chat-input-area">
                 <input type="text" id="messageInput" placeholder="Повідомлення...">
@@ -278,7 +110,6 @@
     <script>
         const sidebar = document.getElementById('sidebar');
         const chatArea = document.getElementById('chatArea');
-        const backBtn = document.getElementById('backBtn');
         const chatTitle = document.getElementById('chatTitle');
         const input = document.getElementById('messageInput');
         const sendBtn = document.getElementById('sendButton');
@@ -286,119 +117,104 @@
         const chatList = document.querySelector('.chat-list');
 
         let currentChatId = 'default';
-        
-        // База даних чатів та їх повідомлень у пам'яті
-        let chatsData = JSON.parse(localStorage.getItem('mirror_chats')) || {
-            'default': {
-                name: 'Mirror Dev',
-                messages: '<div class="message in">Вітаю у твоєму новому месенджері Mirror! Підключено до локального дата-центру в Termux.</div>'
-            }
-        };
+        let serverData = {};
 
-        // Перевірка зв'язку з локальним сервером у Termux
-        async function checkServerStatus() {
+        // Завантаження даних із сервера в Termux
+        async function fetchMessagesFromSever() {
             try {
-                const response = await fetch('http://127.0.0.1:8000/status');
-                const data = await response.json();
-                console.log("Статус сервера:", data.message);
+                const response = await fetch('http://127.0.0.1:8000/messages');
+                serverData = await response.json();
+                renderChatList();
+                renderCurrentMessages();
             } catch (error) {
-                console.log("Сервер недоступний або працює в автономному режимі.");
+                console.log("Помилка зв'язку з сервером у Termux");
             }
         }
 
-        document.addEventListener("DOMContentLoaded", () => {
-            renderChatList();
-            switchChat('default');
-            checkServerStatus();
-        });
-
-        // Відображення списку чатів
         function renderChatList() {
             chatList.innerHTML = '';
-            for (let id in chatsData) {
-                const chat = chatsData[id];
+            for (let id in serverData) {
                 const chatDiv = document.createElement('div');
                 chatDiv.classList.add('chat-item');
                 if (id === currentChatId) chatDiv.classList.add('active');
-                
                 chatDiv.onclick = () => switchChat(id);
                 
-                const firstLetter = chat.name.charAt(0).toUpperCase();
-                
                 chatDiv.innerHTML = `
-                    <div class="avatar">${firstLetter}</div>
+                    <div class="avatar">${id.charAt(0).toUpperCase()}</div>
                     <div class="chat-info">
-                        <div class="chat-name">${chat.name}</div>
-                        <div class="chat-last-message">Натисніть, щоб відкрити</div>
+                        <div class="chat-name">${id === 'default' ? 'Mirror Dev' : id}</div>
+                        <div class="chat-last-message">Серверний чат</div>
                     </div>
                 `;
                 chatList.appendChild(chatDiv);
             }
         }
 
-        // Перемикання між чатами
-        function switchChat(chatId) {
-            currentChatId = chatId;
-            chatTitle.textContent = chatsData[chatId].name;
-            messagesContainer.innerHTML = chatsData[chatId].messages;
+        function renderCurrentMessages() {
+            if (!serverData[currentChatId]) return;
+            messagesContainer.innerHTML = '';
+            serverData[currentChatId].forEach(msg => {
+                const msgDiv = document.createElement('div');
+                // Визначаємо клас за відправником
+                const isOut = msg.sender === "Я";
+                msgDiv.classList.add('message', isOut ? 'out' : 'in');
+                msgDiv.textContent = msg.text;
+                messagesContainer.appendChild(msgDiv);
+            });
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            
-            renderChatList();
-
-            if (window.innerWidth < 768) {
-                sidebar.classList.add('hidden');
-            }
         }
 
-        // Створення нового чату
+        function switchChat(chatId) {
+            currentChatId = chatId;
+            chatTitle.textContent = chatId === 'default' ? 'Mirror Dev' : chatId;
+            renderCurrentMessages();
+            renderChatList();
+            if (window.innerWidth < 768) sidebar.classList.add('hidden');
+        }
+
         function createNewChat() {
-            const chatName = prompt("Введіть назву нового чату:");
+            const chatName = prompt("Введіть назву чату:");
             if (chatName && chatName.trim() !== '') {
-                const newId = 'chat_' + Date.now();
-                chatsData[newId] = {
-                    name: chatName.trim(),
-                    messages: `<div class="message in">Створено новий чат: ${chatName.trim()}</div>`
-                };
-                saveData();
-                switchChat(newId);
+                currentChatId = chatName.trim();
+                if (!serverData[currentChatId]) {
+                    serverData[currentChatId] = [{"sender": "Server", "text": `Створено новий чат: ${currentChatId}`}];
+                }
+                renderChatList();
+                renderCurrentMessages();
             }
         }
 
         function closeChat() {
-            if (window.innerWidth < 768) {
-                sidebar.classList.remove('hidden');
-            }
+            if (window.innerWidth < 768) sidebar.classList.remove('hidden');
         }
 
-        // Збереження даних у localStorage
-        function saveData() {
-            chatsData[currentChatId].messages = messagesContainer.innerHTML;
-            localStorage.setItem('mirror_chats', JSON.stringify(chatsData));
-        }
-
-        // Відправка повідомлення
-        function sendMessage() {
+        // Відправка повідомлення на сервер
+        async function sendMessage() {
             const text = input.value.trim();
             if (text !== '') {
-                const msgDiv = document.createElement('div');
-                msgDiv.classList.add('message', 'out');
-                msgDiv.textContent = text;
-                messagesContainer.appendChild(msgDiv);
-                
-                input.value = '';
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                
-                saveData();
+                try {
+                    await fetch('http://127.0.0.1:8000/send', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ chatId: currentChatId, text: text })
+                    });
+                    input.value = '';
+                    await fetchMessagesFromSever(); // Оновлюємо з сервера
+                } catch (e) {
+                    alert("Не вдалося відправити на сервер!");
+                }
             }
         }
 
         sendBtn.addEventListener('click', sendMessage);
-        input.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                sendMessage();
-            }
-        });
+        input.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+
+        // Періодичне опитування сервера (Polling) кожні 2 секунди для синхронізації
+        setInterval(fetchMessagesFromSever, 2000);
+
+        // Початкове завантаження
+        fetchMessagesFromSever();
     </script>
 </body>
-</html>
+    </html>
     
