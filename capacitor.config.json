@@ -1,0 +1,7 @@
+{
+  "appId": "com.myown.messenger",
+  "appName": "MyMessenger",
+  "webDir": ".",
+  "bundledWebRuntime": false
+}
+
