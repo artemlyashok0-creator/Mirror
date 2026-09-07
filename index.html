@@ -21,6 +21,25 @@
             background-color: var(--bg-color); color: var(--text-color);
             height: 100vh; overflow: hidden; display: flex;
         }
+        /* Екран авторизації */
+        #authScreen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--bg-color); display: flex; flex-direction: column;
+            align-items: center; justify-content: center; z-index: 10; padding: 20px;
+        }
+        #authScreen h1 { margin-bottom: 10px; font-size: 2rem; color: var(--text-color); }
+        #authScreen p { color: var(--text-secondary); margin-bottom: 25px; text-align: center; }
+        #authScreen input {
+            width: 100%; max-width: 320px; padding: 14px 18px; border-radius: 25px;
+            border: none; background-color: var(--chat-bg); color: var(--text-color);
+            font-size: 1rem; outline: none; margin-bottom: 15px; text-align: center;
+        }
+        #authScreen button {
+            width: 100%; max-width: 320px; padding: 14px; border-radius: 25px;
+            border: none; background-color: var(--accent-color); color: white;
+            font-size: 1rem; font-weight: bold; cursor: pointer;
+        }
+
         .app-container { display: flex; width: 100%; height: 100%; position: relative; }
         .sidebar {
             width: 100%; height: 100%; background-color: var(--chat-bg);
@@ -61,6 +80,7 @@
         .message { max-width: 75%; padding: 10px 14px; border-radius: 14px; font-size: 0.95rem; line-height: 1.4; word-wrap: break-word; }
         .message.in { background-color: var(--message-in); align-self: flex-start; border-bottom-left-radius: 3px; }
         .message.out { background-color: var(--message-out); align-self: flex-end; border-bottom-right-radius: 3px; }
+        .message-sender { font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 2px; }
         
         .chat-input-area { padding: 12px; background-color: var(--chat-bg); display: flex; gap: 10px; align-items: center; }
         .chat-input-area input {
@@ -83,10 +103,18 @@
 </head>
 <body>
 
+    <!-- Екран реєстрації -->
+    <div id="authScreen">
+        <h1>Mirror</h1>
+        <p>Введіть своє ім'я для створення локального акаунту</p>
+        <input type="text" id="usernameInput" placeholder="Ваше ім'я чи нікнейм">
+        <button onclick="registerUser()">Увійти в систему</button>
+    </div>
+
     <div class="app-container">
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <span>Mirror</span>
+                <span id="currentUserLabel">Mirror</span>
                 <button onclick="createNewChat()" style="background:none; border:none; color:var(--text-color); font-size:1.4rem; cursor:pointer;">+</button>
             </div>
             <div class="chat-list"></div>
@@ -108,6 +136,40 @@
     </div>
 
     <script>
+        const authScreen = document.getElementById('authScreen');
+        const usernameInput = document.getElementById('usernameInput');
+        const currentUserLabel = document.getElementById('currentUserLabel');
+        
+        let currentUser = localStorage.getItem('mirror_user') || '';
+
+        // Перевірка при запуску: чи є вже збережений користувач
+        if (currentUser) {
+            authScreen.style.display = 'none';
+            currentUserLabel.textContent = currentUser;
+        }
+
+        async function registerUser() {
+            const name = usernameInput.value.trim();
+            if (name) {
+                try {
+                    const res = await fetch('http://127.0.0.1:8000/register', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username: name })
+                    });
+                    if (res.ok) {
+                        localStorage.setItem('mirror_user', name);
+                        currentUser = name;
+                        currentUserLabel.textContent = name;
+                        authScreen.style.display = 'none';
+                        fetchDataFromServer();
+                    }
+                } catch (e) {
+                    alert("Помилка зв'язку з сервером у Termux під час реєстрації!");
+                }
+            }
+        }
+
         const sidebar = document.getElementById('sidebar');
         const chatArea = document.getElementById('chatArea');
         const chatTitle = document.getElementById('chatTitle');
@@ -117,23 +179,24 @@
         const chatList = document.querySelector('.chat-list');
 
         let currentChatId = 'default';
-        let serverData = {};
+        let serverMessages = {};
 
-        // Завантаження даних із сервера в Termux
-        async function fetchMessagesFromSever() {
+        async function fetchDataFromServer() {
+            if (!currentUser) return;
             try {
-                const response = await fetch('http://127.0.0.1:8000/messages');
-                serverData = await response.json();
+                const response = await fetch('http://127.0.0.1:8000/data');
+                const data = await response.json();
+                serverMessages = data.messages;
                 renderChatList();
                 renderCurrentMessages();
             } catch (error) {
-                console.log("Помилка зв'язку з сервером у Termux");
+                console.log("Сервер недоступний");
             }
         }
 
         function renderChatList() {
             chatList.innerHTML = '';
-            for (let id in serverData) {
+            for (let id in serverMessages) {
                 const chatDiv = document.createElement('div');
                 chatDiv.classList.add('chat-item');
                 if (id === currentChatId) chatDiv.classList.add('active');
@@ -143,7 +206,7 @@
                     <div class="avatar">${id.charAt(0).toUpperCase()}</div>
                     <div class="chat-info">
                         <div class="chat-name">${id === 'default' ? 'Mirror Dev' : id}</div>
-                        <div class="chat-last-message">Серверний чат</div>
+                        <div class="chat-last-message">Локальний чат</div>
                     </div>
                 `;
                 chatList.appendChild(chatDiv);
@@ -151,14 +214,24 @@
         }
 
         function renderCurrentMessages() {
-            if (!serverData[currentChatId]) return;
+            if (!serverMessages[currentChatId]) return;
             messagesContainer.innerHTML = '';
-            serverData[currentChatId].forEach(msg => {
+            serverMessages[currentChatId].forEach(msg => {
                 const msgDiv = document.createElement('div');
-                // Визначаємо клас за відправником
-                const isOut = msg.sender === "Я";
+                const isOut = msg.sender === currentUser;
                 msgDiv.classList.add('message', isOut ? 'out' : 'in');
-                msgDiv.textContent = msg.text;
+                
+                if (!isOut) {
+                    const senderDiv = document.createElement('div');
+                    senderDiv.classList.add('message-sender');
+                    senderDiv.textContent = msg.sender;
+                    msgDiv.appendChild(senderDiv);
+                }
+                
+                const textSpan = document.createElement('div');
+                textSpan.textContent = msg.text;
+                msgDiv.appendChild(textSpan);
+                
                 messagesContainer.appendChild(msgDiv);
             });
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
@@ -173,11 +246,11 @@
         }
 
         function createNewChat() {
-            const chatName = prompt("Введіть назву чату:");
+            const chatName = prompt("Введіть назву нового чату:");
             if (chatName && chatName.trim() !== '') {
                 currentChatId = chatName.trim();
-                if (!serverData[currentChatId]) {
-                    serverData[currentChatId] = [{"sender": "Server", "text": `Створено новий чат: ${currentChatId}`}];
+                if (!serverMessages[currentChatId]) {
+                    serverMessages[currentChatId] = [{"sender": "System", "text": `Створено чат: ${currentChatId}`}];
                 }
                 renderChatList();
                 renderCurrentMessages();
@@ -188,7 +261,6 @@
             if (window.innerWidth < 768) sidebar.classList.remove('hidden');
         }
 
-        // Відправка повідомлення на сервер
         async function sendMessage() {
             const text = input.value.trim();
             if (text !== '') {
@@ -196,12 +268,12 @@
                     await fetch('http://127.0.0.1:8000/send', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ chatId: currentChatId, text: text })
+                        body: JSON.stringify({ chatId: currentChatId, text: text, sender: currentUser })
                     });
                     input.value = '';
-                    await fetchMessagesFromSever(); // Оновлюємо з сервера
+                    await fetchDataFromServer();
                 } catch (e) {
-                    alert("Не вдалося відправити на сервер!");
+                    alert("Не вдалося відправити повідомлення!");
                 }
             }
         }
@@ -209,12 +281,10 @@
         sendBtn.addEventListener('click', sendMessage);
         input.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
 
-        // Періодичне опитування сервера (Polling) кожні 2 секунди для синхронізації
-        setInterval(fetchMessagesFromSever, 2000);
-
-        // Початкове завантаження
-        fetchMessagesFromSever();
+        if (currentUser) {
+            setInterval(fetchDataFromServer, 2000);
+            fetchDataFromServer();
+        }
     </script>
 </body>
-    </html>
-    
+</html>
