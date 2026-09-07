@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мій Месенджер</title>
+    <style>
+        :root {
+            --bg-color: #0f141c;
+            --chat-bg: #1e2631;
+            --accent-color: #2b5278;
+            --text-color: #f5f5f5;
+            --text-secondary: #8b96a5;
+            --message-out: #2b5278;
+            --message-in: #18222d;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Бічна панель (список чатів) */
+        .sidebar {
+            width: 100%;
+            max-width: 320px;
+            background-color: var(--chat-bg);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .chat-list {
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .chat-item {
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .chat-item:hover, .chat-item.active {
+            background-color: rgba(43, 82, 120, 0.3);
+        }
+
+        .avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .chat-info {
+            overflow: hidden;
+        }
+
+        .chat-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .chat-last-message {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Область переписки */
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--bg-color);
+        }
+
+        .chat-header {
+            padding: 15px;
+            background-color: var(--chat-bg);
+            font-weight: bold;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .messages-container {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .message {
+            max-width: 70%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+
+        .message.in {
+            background-color: var(--message-in);
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+        }
+
+        .message.out {
+            background-color: var(--message-out);
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+
+        /* Панель введення тексту */
+        .chat-input-area {
+            padding: 12px;
+            background-color: var(--chat-bg);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .chat-input-area input {
+            flex: 1;
+            padding: 10px 15px;
+            border-radius: 20px;
+            border: none;
+            background-color: rgba(0, 0, 0, 0.2);
+            color: var(--text-color);
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .chat-input-area button {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* Адаптивність для мобільних (щоб на телефоні показувало чат на весь екран) */
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none; /* У реальному додатку тут зробимо перемикач екранв */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Список чатів (на мобільних поки прихований стилями для зручності прототипу) -->
+    <div class="sidebar">
+        <div class="sidebar-header">Чати</div>
+        <div class="chat-list">
+            <div class="chat-item active">
+                <div class="avatar">AI</div>
+                <div class="chat-info">
+                    <div class="chat-name">Головний чат</div>
+                    <div class="chat-last-message">Привіт! Це мій власний клієнт.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Основне вікно повідомлень -->
+    <div class="chat-area">
+        <div class="chat-header">Головний чат</div>
+        
+        <div class="messages-container" id="messages">
+            <div class="message in">Вітаю у твоєму новому месенджері! Дизайн готовий.</div>
+        </div>
+
+        <div class="chat-input-area">
+            <input type="text" id="messageInput" placeholder="Написати повідомлення...">
+            <button id="sendButton">➤</button>
+        </div>
+    </div>
+
+    <script>
+        // Проста логіка для відправки повідомлень (поки що локально)
+        const input = document.getElementById('messageInput');
+        const sendBtn = document.getElementById('sendButton');
+        const messagesContainer = document.getElementById('messages');
+
+        function sendMessage() {
+            const text = input.value.trim();
+            if (text !== '') {
+                // Створюємо елемент вихідного повідомлення
+                const msgDiv = document.createElement('div');
+                msgDiv.classList.add('message', 'out');
+                msgDiv.textContent = text;
+                messagesContainer.appendChild(msgDiv);
+                
+                input.value = '';
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+        }
+
+        sendBtn.addEventListener('click', sendMessage);
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
+
