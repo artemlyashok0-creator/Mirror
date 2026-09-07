@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="uk">
 <head>
@@ -21,13 +22,12 @@
             background-color: var(--bg-color); color: var(--text-color);
             height: 100vh; overflow: hidden; display: flex;
         }
-        /* Екран авторизації */
         #authScreen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: var(--bg-color); display: flex; flex-direction: column;
             align-items: center; justify-content: center; z-index: 10; padding: 20px;
         }
-        #authScreen h1 { margin-bottom: 10px; font-size: 2rem; color: var(--text-color); }
+        #authScreen h1 { margin-bottom: 10px; font-size: 2rem; }
         #authScreen p { color: var(--text-secondary); margin-bottom: 25px; text-align: center; }
         #authScreen input {
             width: 100%; max-width: 320px; padding: 14px 18px; border-radius: 25px;
@@ -103,12 +103,11 @@
 </head>
 <body>
 
-    <!-- Екран реєстрації -->
     <div id="authScreen">
         <h1>Mirror</h1>
-        <p>Введіть своє ім'я для створення локального акаунту</p>
-        <input type="text" id="usernameInput" placeholder="Ваше ім'я чи нікнейм">
-        <button onclick="registerUser()">Увійти в систему</button>
+        <p>Введіть своє ім'я для підключення до сервера</p>
+        <input type="text" id="usernameInput" placeholder="Ваше ім'я">
+        <button onclick="registerUser()">Увійти</button>
     </div>
 
     <div class="app-container">
@@ -142,7 +141,6 @@
         
         let currentUser = localStorage.getItem('mirror_user') || '';
 
-        // Перевірка при запуску: чи є вже збережений користувач
         if (currentUser) {
             authScreen.style.display = 'none';
             currentUserLabel.textContent = currentUser;
@@ -165,13 +163,12 @@
                         fetchDataFromServer();
                     }
                 } catch (e) {
-                    alert("Помилка зв'язку з сервером у Termux під час реєстрації!");
+                    alert("Помилка реєстрації!");
                 }
             }
         }
 
         const sidebar = document.getElementById('sidebar');
-        const chatArea = document.getElementById('chatArea');
         const chatTitle = document.getElementById('chatTitle');
         const input = document.getElementById('messageInput');
         const sendBtn = document.getElementById('sendButton');
@@ -186,7 +183,7 @@
             try {
                 const response = await fetch('http://127.0.0.1:8000/data');
                 const data = await response.json();
-                serverMessages = data.messages;
+                serverMessages = data.messages || {};
                 renderChatList();
                 renderCurrentMessages();
             } catch (error) {
@@ -206,7 +203,7 @@
                     <div class="avatar">${id.charAt(0).toUpperCase()}</div>
                     <div class="chat-info">
                         <div class="chat-name">${id === 'default' ? 'Mirror Dev' : id}</div>
-                        <div class="chat-last-message">Локальний чат</div>
+                        <div class="chat-last-message">SQLite База даних</div>
                     </div>
                 `;
                 chatList.appendChild(chatDiv);
@@ -288,3 +285,4 @@
     </script>
 </body>
 </html>
+    
