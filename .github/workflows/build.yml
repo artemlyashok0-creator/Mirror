@@ -30,7 +30,7 @@ jobs:
         npm install @capacitor/core @capacitor/cli @capacitor/android
         npx cap init Mirror com.mirror.messenger --web-dir www
         npx cap add android
-        
+        npx cap update android
 
     - name: Build Android APK Debug
       run: |
