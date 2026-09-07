@@ -206,17 +206,45 @@
             <button id="sendButton">➤</button>
         </div>
     </div>
-
-    <script>
-        // Проста логіка для відправки повідомлень (поки що локально)
+        const sidebar = document.getElementById('sidebar');
+        const chatArea = document.getElementById('chatArea');
+        const backBtn = document.getElementById('backBtn');
+        const chatTitle = document.getElementById('chatTitle');
         const input = document.getElementById('messageInput');
         const sendBtn = document.getElementById('sendButton');
         const messagesContainer = document.getElementById('messages');
 
+        // Завантаження збережених повідомлень при запуску
+        document.addEventListener("DOMContentLoaded", loadMessages);
+
+        function loadMessages() {
+            const savedMessages = localStorage.getItem('mirror_messages');
+            if (savedMessages) {
+                messagesContainer.innerHTML = savedMessages;
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+        }
+
+        function saveMessages() {
+            localStorage.setItem('mirror_messages', messagesContainer.innerHTML);
+        }
+
+        function openChat(name, initialMsg) {
+            chatTitle.textContent = name;
+            if (window.innerWidth < 768) {
+                sidebar.classList.add('hidden');
+            }
+        }
+
+        function closeChat() {
+            if (window.innerWidth < 768) {
+                sidebar.classList.remove('hidden');
+            }
+        }
+
         function sendMessage() {
             const text = input.value.trim();
             if (text !== '') {
-                // Створюємо елемент вихідного повідомлення
                 const msgDiv = document.createElement('div');
                 msgDiv.classList.add('message', 'out');
                 msgDiv.textContent = text;
@@ -224,6 +252,9 @@
                 
                 input.value = '';
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                
+                // Зберігаємо історію
+                saveMessages();
             }
         }
 
@@ -233,7 +264,6 @@
                 sendMessage();
             }
         });
-    </script>
 </body>
 </html>
 
