@@ -265,7 +265,7 @@
             </div>
             
             <div class="messages-container" id="messages">
-                <div class="message in">Вітаю у твоєму новому месенджері Mirror! Структура інтерфейсу працює адаптивно.</div>
+                <div class="message in">Вітаю у твоєму новому месенджері Mirror! Підключено до локального дата-центру в Termux.</div>
             </div>
 
             <div class="chat-input-area">
@@ -291,13 +291,25 @@
         let chatsData = JSON.parse(localStorage.getItem('mirror_chats')) || {
             'default': {
                 name: 'Mirror Dev',
-                messages: '<div class="message in">Вітаю у твоєму новому месенджері Mirror! Структура інтерфейсу працює адаптивно.</div>'
+                messages: '<div class="message in">Вітаю у твоєму новому месенджері Mirror! Підключено до локального дата-центру в Termux.</div>'
             }
         };
+
+        // Перевірка зв'язку з локальним сервером у Termux
+        async function checkServerStatus() {
+            try {
+                const response = await fetch('http://127.0.0.1:8000/status');
+                const data = await response.json();
+                console.log("Статус сервера:", data.message);
+            } catch (error) {
+                console.log("Сервер недоступний або працює в автономному режимі.");
+            }
+        }
 
         document.addEventListener("DOMContentLoaded", () => {
             renderChatList();
             switchChat('default');
+            checkServerStatus();
         });
 
         // Відображення списку чатів
@@ -389,4 +401,4 @@
     </script>
 </body>
 </html>
-
+    
