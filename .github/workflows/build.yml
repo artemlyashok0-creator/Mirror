@@ -24,13 +24,23 @@ jobs:
       with:
         node-version: 18
 
-    - name: Install Capacitor CLI & init project wrapper
+    - name: Install Capacitor CLI & prepare project
       run: |
         npm init -y
         npm install @capacitor/core @capacitor/cli @capacitor/android
+        
+        # Створюємо папку www, якщо її немає
+        mkdir -p www
+        
+        # Якщо index.html лежить у корені репозиторію, переносимо його в www
+        if [ -f "index.html" ]; then mv index.html www/; fi
+        
+        # Ініціалізуємо Capacitor
         npx cap init Mirror com.mirror.messenger --web-dir www
+        
+        # Додаємо платформу Android та синхронізуємо (створює всі потрібні gradle-файли)
         npx cap add android
-        npx cap update android
+        npx cap sync android
 
     - name: Build Android APK Debug
       run: |
