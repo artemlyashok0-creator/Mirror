@@ -35,6 +35,17 @@ jobs:
         npx cap init Mirror com.mirror.messenger --web-dir www
         npx cap add android
 
+    - name: Allow HTTP Cleartext Traffic in Android
+      run: |
+        MANIFEST="android/app/src/main/AndroidManifest.xml"
+        if [ -f "$MANIFEST" ]; then
+          sed -i 's/<application/<application android:usesCleartextTraffic="true"/' "$MANIFEST"
+          echo "Successfully added usesCleartextTraffic to AndroidManifest.xml"
+        else
+          echo "Manifest not found!"
+          exit 1
+        fi
+
     - name: Build Android APK Debug
       run: |
         cd android
