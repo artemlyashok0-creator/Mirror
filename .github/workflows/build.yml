@@ -18,7 +18,7 @@ jobs:
       with:
         distribution: 'temurin'
         java-version: '17'
-        cache: ''  # Повністю вимикаємо вбудований кеш java/gradle від github actions
+        cache: 'gradle'
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -28,30 +28,20 @@ jobs:
     - name: Install Capacitor CLI & prepare project
       run: |
         npm init -y
-        npm install @capacitor/core @capacitor/cli @capacitor/android
+        npm install @capacitor/core@latest @capacitor/cli@latest @capacitor/android@latest
         
-        # Створюємо папку www, якщо її немає
         mkdir -p www
-        
-        # Якщо index.html лежить у корені репозиторію, переносимо його в www
         if [ -f "index.html" ]; then mv index.html www/; fi
         
-        # Ініціалізуємо Capacitor
         npx cap init Mirror com.mirror.messenger --web-dir www
-        
-        # Додаємо платформу Android та синхронізуємо
         npx cap add android
-        npx cap sync android
 
-    - name: Build Android APK Debug
+    - name: Fix Gradle Build Config & Build APK
       run: |
         cd android
         chmod +x gradlew
-        # Видаляємо всі можливі кеші gradle глобально та локально
-        rm -rf ~/.gradle
-        rm -rf .gradle
-        rm -rf app/.gradle
-        ./gradlew assembleDebug --no-daemon --refresh-dependencies
+        # Додаємо примусове оновлення конфігурації без старих кешів
+        ./gradlew assembleDebug --refresh-dependencies
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
