@@ -18,7 +18,6 @@ jobs:
       with:
         distribution: 'temurin'
         java-version: '17'
-        cache: 'gradle'
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -36,12 +35,11 @@ jobs:
         npx cap init Mirror com.mirror.messenger --web-dir www
         npx cap add android
 
-    - name: Fix Gradle Build Config & Build APK
+    - name: Build Android APK Debug
       run: |
         cd android
         chmod +x gradlew
-        # Додаємо примусове оновлення конфігурації без старих кешів
-        ./gradlew assembleDebug --refresh-dependencies
+        ./gradlew assembleDebug --no-daemon
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
