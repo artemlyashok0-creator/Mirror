@@ -1,288 +1,168 @@
-
 <!DOCTYPE html>
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mirror</title>
+    <title>Mirror Messenger</title>
     <style>
-        :root {
-            --bg-color: #0f141c;
-            --chat-bg: #1e2631;
-            --accent-color: #2b5278;
-            --text-color: #f5f5f5;
-            --text-secondary: #8b96a5;
-            --message-out: #2b5278;
-            --message-in: #18222d;
-        }
-        * { box-sizing: border-box; }
-        body {
-            margin: 0; padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg-color); color: var(--text-color);
-            height: 100vh; overflow: hidden; display: flex;
-        }
-        #authScreen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: var(--bg-color); display: flex; flex-direction: column;
-            align-items: center; justify-content: center; z-index: 10; padding: 20px;
-        }
-        #authScreen h1 { margin-bottom: 10px; font-size: 2rem; }
-        #authScreen p { color: var(--text-secondary); margin-bottom: 25px; text-align: center; }
-        #authScreen input {
-            width: 100%; max-width: 320px; padding: 14px 18px; border-radius: 25px;
-            border: none; background-color: var(--chat-bg); color: var(--text-color);
-            font-size: 1rem; outline: none; margin-bottom: 15px; text-align: center;
-        }
-        #authScreen button {
-            width: 100%; max-width: 320px; padding: 14px; border-radius: 25px;
-            border: none; background-color: var(--accent-color); color: white;
-            font-size: 1rem; font-weight: bold; cursor: pointer;
-        }
-
-        .app-container { display: flex; width: 100%; height: 100%; position: relative; }
-        .sidebar {
-            width: 100%; height: 100%; background-color: var(--chat-bg);
-            display: flex; flex-direction: column; position: absolute; left: 0; top: 0;
-            transition: transform 0.3s ease; z-index: 2;
-        }
-        .sidebar.hidden { transform: translateX(-100%); }
-        .sidebar-header {
-            padding: 15px 20px; font-size: 1.3rem; font-weight: bold;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .chat-list { overflow-y: auto; flex: 1; }
-        .chat-item {
-            padding: 14px 20px; display: flex; align-items: center; cursor: pointer;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
-        }
-        .chat-item.active { background-color: rgba(43, 82, 120, 0.4); }
-        .avatar {
-            width: 50px; height: 50px; border-radius: 50%; background-color: var(--accent-color);
-            display: flex; align-items: center; justify-content: center; font-weight: bold;
-            margin-right: 15px; flex-shrink: 0;
-        }
-        .chat-info { overflow: hidden; flex: 1; }
-        .chat-name { font-weight: 600; font-size: 1.05rem; margin-bottom: 4px; }
-        .chat-last-message { font-size: 0.9rem; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        
-        .chat-area {
-            width: 100%; height: 100%; display: flex; flex-direction: column;
-            background-color: var(--bg-color); position: absolute; left: 0; top: 0; z-index: 1;
-        }
-        .chat-header {
-            padding: 12px 15px; background-color: var(--chat-bg); font-weight: bold;
-            display: flex; align-items: center; gap: 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); height: 60px;
-        }
-        .back-btn { background: none; border: none; color: var(--text-color); font-size: 1.2rem; cursor: pointer; padding: 5px 10px; }
-        .messages-container { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
-        .message { max-width: 75%; padding: 10px 14px; border-radius: 14px; font-size: 0.95rem; line-height: 1.4; word-wrap: break-word; }
-        .message.in { background-color: var(--message-in); align-self: flex-start; border-bottom-left-radius: 3px; }
-        .message.out { background-color: var(--message-out); align-self: flex-end; border-bottom-right-radius: 3px; }
-        .message-sender { font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 2px; }
-        
-        .chat-input-area { padding: 12px; background-color: var(--chat-bg); display: flex; gap: 10px; align-items: center; }
-        .chat-input-area input {
-            flex: 1; padding: 12px 16px; border-radius: 22px; border: none;
-            background-color: rgba(0, 0, 0, 0.25); color: var(--text-color); font-size: 0.95rem; outline: none;
-        }
-        .chat-input-area button {
-            background-color: var(--accent-color); color: white; border: none;
-            width: 44px; height: 44px; border-radius: 50%; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0;
-        }
-
-        @media (min-width: 768px) {
-            .app-container { max-width: 900px; margin: auto; height: 90vh; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-            .sidebar { width: 320px; position: relative; transform: none !important; border-right: 1px solid rgba(255,255,255,0.05); }
-            .chat-area { position: relative; left: auto; top: auto; flex: 1; }
-            .back-btn { display: none; }
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: #0f172a; color: #f8fafc; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .container { width: 100%; max-width: 380px; padding: 24px; background: #1e293b; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); text-align: center; }
+        h1 { margin-bottom: 8px; font-size: 26px; color: #38bdf8; }
+        p { color: #94a3b8; font-size: 14px; margin-bottom: 24px; }
+        input { width: 100%; padding: 12px 16px; margin-bottom: 16px; background: #0f172a; border: 1px solid #334155; border-radius: 8px; color: #fff; font-size: 16px; outline: none; }
+        input:focus { border-color: #38bdf8; }
+        button { width: 100%; padding: 12px; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.2s; margin-bottom: 10px; }
+        .btn-primary { background: #38bdf8; color: #0f172a; }
+        .btn-primary:hover { background: #0ea5e9; }
+        .btn-secondary { background: transparent; color: #94a3b8; border: 1px solid #334155; }
+        .btn-secondary:hover { color: #fff; border-color: #64748b; }
+        .hidden { display: none; }
+        .error { color: #f43f5e; font-size: 13px; margin-bottom: 15px; }
+        .success { color: #10b981; font-size: 13px; margin-bottom: 15px; }
+        .chat-box { text-align: left; height: 300px; overflow-y: auto; background: #0f172a; padding: 10px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #334155; }
+        .msg { margin-bottom: 8px; font-size: 14px; }
+        .msg span { font-weight: bold; color: #38bdf8; }
     </style>
 </head>
 <body>
 
-    <div id="authScreen">
+    <div class="container" id="auth-screen">
         <h1>Mirror</h1>
-        <p>Введіть своє ім'я для підключення до сервера</p>
-        <input type="text" id="usernameInput" placeholder="Ваше ім'я">
-        <button onclick="registerUser()">Увійти</button>
+        <p>Офлайн кишеньковий дата-центр</p>
+        
+        <div id="message-container"></div>
+
+        <input type="text" id="username" placeholder="Введіть ваше ім'я (username)" autocomplete="off">
+        
+        <button class="btn-primary" onclick="registerUser()">Зареєструватися</button>
+        <button class="btn-secondary" onclick="loginUser()">Увійти в систему</button>
     </div>
 
-    <div class="app-container">
-        <div class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <span id="currentUserLabel">Mirror</span>
-                <button onclick="createNewChat()" style="background:none; border:none; color:var(--text-color); font-size:1.4rem; cursor:pointer;">+</button>
-            </div>
-            <div class="chat-list"></div>
+    <div class="container hidden" id="chat-screen">
+        <h1 id="welcome-title">Чат</h1>
+        <p>Підключено до локального серверу</p>
+        
+        <div class="chat-box" id="chat-messages">
+            <div class="msg"><span>Система:</span> З'єднання встановлено.</div>
         </div>
 
-        <div class="chat-area" id="chatArea">
-            <div class="chat-header">
-                <button class="back-btn" onclick="closeChat()">❮</button>
-                <span id="chatTitle">Mirror Dev</span>
-            </div>
-            
-            <div class="messages-container" id="messages"></div>
-
-            <div class="chat-input-area">
-                <input type="text" id="messageInput" placeholder="Повідомлення...">
-                <button id="sendButton">➤</button>
-            </div>
-        </div>
+        <input type="text" id="msg-input" placeholder="Введіть повідомлення..." autocomplete="off">
+        <button class="btn-primary" onclick="sendMessage()">Надіслати</button>
+        <button class="btn-secondary" onclick="logout()" style="margin-top: 5px;">Вийти</button>
     </div>
 
     <script>
-        const authScreen = document.getElementById('authScreen');
-        const usernameInput = document.getElementById('usernameInput');
-        const currentUserLabel = document.getElementById('currentUserLabel');
-        
-        let currentUser = localStorage.getItem('mirror_user') || '';
+        // Використовуємо 101.0.0.1 або 127.0.0.1 для локального бекенду в Termux
+        const SERVER_URL = "http://127.0.0.1:8000";
 
-        if (currentUser) {
-            authScreen.style.display = 'none';
-            currentUserLabel.textContent = currentUser;
+        function showMessage(text, isError = true) {
+            const container = document.getElementById('message-container');
+            container.innerHTML = `<div class="${isError ? 'error' : 'success'}">${text}</div>`;
         }
 
         async function registerUser() {
-            const name = usernameInput.value.trim();
-            if (name) {
-                try {
-                    const res = await fetch('http://127.0.0.1:8000/register', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ username: name })
-                    });
-                    if (res.ok) {
-                        localStorage.setItem('mirror_user', name);
-                        currentUser = name;
-                        currentUserLabel.textContent = name;
-                        authScreen.style.display = 'none';
-                        fetchDataFromServer();
-                    }
-                } catch (e) {
-                    alert("Помилка реєстрації!");
-                }
+            const username = document.getElementById('username').value.trim();
+            if (!username) {
+                showMessage("Будь ласка, введіть ім'я!");
+                return;
             }
-        }
 
-        const sidebar = document.getElementById('sidebar');
-        const chatTitle = document.getElementById('chatTitle');
-        const input = document.getElementById('messageInput');
-        const sendBtn = document.getElementById('sendButton');
-        const messagesContainer = document.getElementById('messages');
-        const chatList = document.querySelector('.chat-list');
-
-        let currentChatId = 'default';
-        let serverMessages = {};
-
-        async function fetchDataFromServer() {
-            if (!currentUser) return;
             try {
-                const response = await fetch('http://127.0.0.1:8000/data');
-                const data = await response.json();
-                serverMessages = data.messages || {};
-                renderChatList();
-                renderCurrentMessages();
-            } catch (error) {
-                console.log("Сервер недоступний");
-            }
-        }
+                const response = await fetch(`${SERVER_URL}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: username })
+                });
 
-        function renderChatList() {
-            chatList.innerHTML = '';
-            for (let id in serverMessages) {
-                const chatDiv = document.createElement('div');
-                chatDiv.classList.add('chat-item');
-                if (id === currentChatId) chatDiv.classList.add('active');
-                chatDiv.onclick = () => switchChat(id);
-                
-                chatDiv.innerHTML = `
-                    <div class="avatar">${id.charAt(0).toUpperCase()}</div>
-                    <div class="chat-info">
-                        <div class="chat-name">${id === 'default' ? 'Mirror Dev' : id}</div>
-                        <div class="chat-last-message">SQLite База даних</div>
-                    </div>
-                `;
-                chatList.appendChild(chatDiv);
-            }
-        }
-
-        function renderCurrentMessages() {
-            if (!serverMessages[currentChatId]) return;
-            messagesContainer.innerHTML = '';
-            serverMessages[currentChatId].forEach(msg => {
-                const msgDiv = document.createElement('div');
-                const isOut = msg.sender === currentUser;
-                msgDiv.classList.add('message', isOut ? 'out' : 'in');
-                
-                if (!isOut) {
-                    const senderDiv = document.createElement('div');
-                    senderDiv.classList.add('message-sender');
-                    senderDiv.textContent = msg.sender;
-                    msgDiv.appendChild(senderDiv);
+                if (response.ok) {
+                    showMessage("Реєстрація успішна! Тепер увійдіть.", false);
+                } else {
+                    showMessage("Користувач уже існує або помилка сервера.");
                 }
-                
-                const textSpan = document.createElement('div');
-                textSpan.textContent = msg.text;
-                msgDiv.appendChild(textSpan);
-                
-                messagesContainer.appendChild(msgDiv);
-            });
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }
-
-        function switchChat(chatId) {
-            currentChatId = chatId;
-            chatTitle.textContent = chatId === 'default' ? 'Mirror Dev' : chatId;
-            renderCurrentMessages();
-            renderChatList();
-            if (window.innerWidth < 768) sidebar.classList.add('hidden');
-        }
-
-        function createNewChat() {
-            const chatName = prompt("Введіть назву нового чату:");
-            if (chatName && chatName.trim() !== '') {
-                currentChatId = chatName.trim();
-                if (!serverMessages[currentChatId]) {
-                    serverMessages[currentChatId] = [{"sender": "System", "text": `Створено чат: ${currentChatId}`}];
-                }
-                renderChatList();
-                renderCurrentMessages();
+            } catch (err) {
+                showMessage("Помилка з'єднання з сервером у Termux!");
             }
         }
 
-        function closeChat() {
-            if (window.innerWidth < 768) sidebar.classList.remove('hidden');
+        async function loginUser() {
+            const username = document.getElementById('username').value.trim();
+            if (!username) {
+                showMessage("Будь ласка, введіть ім'я для входу!");
+                return;
+            }
+
+            try {
+                // Перевіряємо статус або робимо спробу входу
+                const response = await fetch(`${SERVER_URL}/status`);
+                if (response.ok) {
+                    // Зберігаємо ім'я та переходимо в чат
+                    localStorage.setItem('mirror_user', username);
+                    enterChat(username);
+                } else {
+                    showMessage("Сервер недоступний.");
+                }
+            } catch (err) {
+                showMessage("Не вдалося достукатися до бекенду. Перевірте, чи запущений Python у Termux!");
+            }
+        }
+
+        function enterChat(username) {
+            document.getElementById('auth-screen').classList.add('hidden');
+            document.getElementById('chat-screen').classList.remove('hidden');
+            document.getElementById('welcome-title').innerText = `Привіт, ${username}`;
+            loadMessages();
+        }
+
+        function logout() {
+            localStorage.removeItem('mirror_user');
+            document.getElementById('chat-screen').classList.add('hidden');
+            document.getElementById('auth-screen').classList.remove('hidden');
+        }
+
+        async function loadMessages() {
+            try {
+                const res = await fetch(`${SERVER_URL}/data`);
+                if (res.ok) {
+                    const data = await res.json();
+                    const box = document.getElementById('chat-messages');
+                    box.innerHTML = '';
+                    // Тут виводимо повідомлення з бази
+                    box.innerHTML += `<div class="msg"><span>Сервер:</span> База даних активна.</div>`;
+                }
+            } catch (e) {
+                console.error(e);
+            }
         }
 
         async function sendMessage() {
-            const text = input.value.trim();
-            if (text !== '') {
-                try {
-                    await fetch('http://127.0.0.1:8000/send', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ chatId: currentChatId, text: text, sender: currentUser })
-                    });
-                    input.value = '';
-                    await fetchDataFromServer();
-                } catch (e) {
-                    alert("Не вдалося відправити повідомлення!");
-                }
+            const textInput = document.getElementById('msg-input');
+            const text = textInput.value.trim();
+            const username = localStorage.getItem('mirror_user') || 'Гість';
+
+            if (!text) return;
+
+            try {
+                await fetch(`${SERVER_URL}/send`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chatId: 'default', sender: username, text: text })
+                });
+                textInput.value = '';
+                loadMessages();
+            } catch (e) {
+                alert("Помилка надсилання повідомлення");
             }
         }
 
-        sendBtn.addEventListener('click', sendMessage);
-        input.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
-
-        if (currentUser) {
-            setInterval(fetchDataFromServer, 2000);
-            fetchDataFromServer();
+        // Автоматичний вхід, якщо користувач вже авторизований на цьому пристрої
+        window.onload = () => {
+            const savedUser = localStorage.getItem('mirror_user');
+            if (savedUser) {
+                enterChat(savedUser);
+            }
         }
     </script>
 </body>
 </html>
-    
+
