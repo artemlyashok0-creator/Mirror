@@ -18,6 +18,7 @@ jobs:
       with:
         distribution: 'temurin'
         java-version: '17'
+        cache: ''  # Повністю вимикаємо вбудований кеш java/gradle від github actions
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -38,7 +39,7 @@ jobs:
         # Ініціалізуємо Capacitor
         npx cap init Mirror com.mirror.messenger --web-dir www
         
-        # Додаємо платформу Android та синхронізуємо (створює всі потрібні gradle-файли)
+        # Додаємо платформу Android та синхронізуємо
         npx cap add android
         npx cap sync android
 
@@ -46,9 +47,12 @@ jobs:
       run: |
         cd android
         chmod +x gradlew
-        rm -rf ~/.gradle/caches/
-        ./gradlew assembleDebug --refresh-dependencies --no-daemon
-        
+        # Видаляємо всі можливі кеші gradle глобально та локально
+        rm -rf ~/.gradle
+        rm -rf .gradle
+        rm -rf app/.gradle
+        ./gradlew assembleDebug --no-daemon --refresh-dependencies
+
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
