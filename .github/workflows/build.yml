@@ -46,6 +46,7 @@ jobs:
       run: |
         cd android
         chmod +x gradlew
+        rm -rf ~/.gradle/caches/
         ./gradlew assembleDebug --refresh-dependencies --no-daemon
         
     - name: Upload APK Artifact
