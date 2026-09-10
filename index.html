@@ -126,8 +126,7 @@
             <div style="background-color: #17212b; border-radius: 12px; padding: 16px;">
                 <label style="font-size: 13px; color: #8899a6; display: block; margin-bottom: 8px;">Змінити ім'я користувача</label>
                 <input type="text" id="new-username-input" placeholder="Введіть нове ім'я..." style="width: 100%; padding: 10px; background: #0e1621; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; margin-bottom: 12px;">
-                <button onclick="updateAccountDetails()" style="width: 100%; background: #5288c1; color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: 500; cursor: pointer;">Зберегти</button>
-            </div>
+                <button onclick="updateAccountDetails()" style="width: 100%; background: #5288c1; color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: 500; cursor: poin
         </div>
     </div>
 
@@ -138,16 +137,35 @@
             <h2 style="font-size: 16px; color: #fff;">Налаштування чатів</h2>
         </div>
         <div style="padding: 16px; display: flex; flex-direction: column; gap: 16px;">
-            <div style="background-color: #17212b; border-radius: 12px; padding: 16px;">
-                <h3 style="font-size: 14px; color: #5288c1; margin-bottom: 12px;">Колірна схема</h3>
-                <div style="display: flex; gap: 10px;">
-                    <div onclick="applyTheme('#0e1621', '#17212b')" style="flex: 1; background: #0e1621; border: 2px solid #5288c1; padding: 12px; border-radius: 8px; text-align: center; cursor: pointer; font-size: 12px;">Темна</div>
-                    <div onclick="applyTheme('#ffffff', '#f0f2f5')" style="flex: 1; background: #ffffff; color: #000; border: 2px solid #ccc; padding: 12px; border-radius: 8px; text-align: center; cursor: pointer; font-size: 12px;">Світла</div>
-                </div>
+        <!-- Колірна схема -->
+        <div style="background-color: #17212b; border-radius: 12px; padding: 16px;">
+            <h3 style="font-size: 14px; color: #5288c1; margin-bottom: 12px;">Колірна схема</h3>
+            <div style="display: flex; gap: 10px;">
+                <div onclick="applyTheme('#0e1621', '#17212b')" style="flex: 1; background: #0e1621; border: 2px solid #5288c1; padding: 12px; border-radius: 8px; text-align: center; cursor: pointer; font-size: 12px;">Темна</div>
+                <div onclick="applyTheme('#ffffff', '#f0f2f5')" style="flex: 1; background: #ffffff; color: #000; border: 2px solid #ccc; padding: 12px; border-radius: 8px; text-align: center; cursor: pointer; font-size: 12px;">Світла</div>
             </div>
         </div>
-    </div>
 
+        <!-- Вибір шпалер для чату -->
+        <div style="background-color: #17212b; border-radius: 12px; padding: 16px;">
+            <h3 style="font-size: 14px; color: #5288c1; margin-bottom: 12px;">Шпалери для чатів</h3>
+            
+            <!-- Сітка готових фонів -->
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px;">
+                <div onclick="setChatWallpaper('linear-gradient(135deg, #0e1621 0%, #1b2836 100%)')" style="height: 60px; background: linear-gradient(135deg, #0e1621 0%, #1b2836 100%); border-radius: 8px; cursor: pointer; border: 2px solid rgba(255,255,255,0.1);"></div>
+                <div onclick="setChatWallpaper('linear-gradient(135deg, #1f4068 0%, #162447 100%)')" style="height: 60px; background: linear-gradient(135deg, #1f4068 0%, #162447 100%); border-radius: 8px; cursor: pointer; border: 2px solid rgba(255,255,255,0.1);"></div>
+                <div onclick="setChatWallpaper('linear-gradient(135deg, #2c3e50 0%, #000000 100%)')" style="height: 60px; background: linear-gradient(135deg, #2c3e50 0%, #000000 100%); border-radius: 8px; cursor: pointer; border: 2px solid rgba(255,255,255,0.1);"></div>
+            </div>
+
+            <!-- Завантаження власної картинки -->
+            <label for="wallpaper-file-input" style="display: block; width: 100%; text-align: center; background: #2b5278; color: #fff; padding: 10px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer;">
+                📁 Завантажити власну картинку
+            </label>
+            <input type="file" id="wallpaper-file-input" accept="image/*" style="display: none;">
+        </div>
+    </div>
+</div>
+            
     <!-- ПІДМЕНЮ: СПОВІЩЕННЯ -->
     <div id="sub-screen-notifications" class="screen">
         <div class="room-header">
