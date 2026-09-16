@@ -311,7 +311,93 @@
     </div>
 
     <!-- Екран: Нові спілкування -->
-    <div id="screen-new-chat" class="sc
+    <div id="screen-new-chat" class="screen hidden" style="background-color: #0e1621; z-index: 30; display: flex; flex-direction: column;">
+        <div class="room-header">
+            <button class="back-btn" onclick="closeNewChatScreen()">❮ Назад</button>
+            <h2 style="font-size: 16px; color: #fff;">Нові спілкування</h2>
+        </div>
+        <div style="padding: 12px 16px; background-color: #17212b;">
+            <input type="text" id="contact-search-input" placeholder="Пошук користувачів..." oninput="filterContacts()" style="width: 100%; background-color: #0e1621; border: none; border-radius: 8px; padding: 10px 14px; color: #fff; font-size: 14px; outline: none; margin-bottom: 0;">
+        </div>
+        <div id="contacts-list-container" style="flex: 1; padding: 8px 0; overflow-y: auto;">
+            <div style="text-align: center; color: #8899a6; padding: 30px;">Завантаження контактів...</div>
+        </div>
+    </div>
+
+    <script>
+        const SERVER_URL = "http://127.0.0.1:8000";
+        let activeChatId = 'default';
+
+        function showMessage(text, isError = true) {
+            const container = document.getElementById('message-container');
+            if (container) container.innerHTML = `<div class="${isError ? 'error' : 'success'}">${text}</div>`;
+        }
+
+        async function registerUser() {
+            const username = document.getElementById('username').value.trim();
+            if (!username) { showMessage("Введіть ім'я!"); return; }
+            try {
+                const res = await fetch(`${SERVER_URL}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username })
+                });
+                if (res.ok) showMessage("Реєстрація успішна! Увійдіть.", false);
+                else showMessage("Користувач уже існує.");
+            } catch (e) { showMessage("Помилка зв'язку з Termux!"); }
+        }
+
+        async function loginUser() {
+            const username = document.getElementById('username').value.trim();
+            if (!username) { showMessage("Введіть ім'я для входу!"); return; }
+            try {
+                const res = await fetch(`${SERVER_URL}/status`);
+                if (res.ok) {
+                    localStorage.setItem('mirror_user', username);
+                    enterMainApp();
+                } else { showMessage("Сервер недоступний."); }
+            } catch (e) { showMessage("Немає зв'язку з бекендом."); }
+        }
+
+        function enterMainApp() {
+            document.getElementById('auth-screen').classList.remove('active');
+            document.getElementById('main-screen').classList.add('active');
+            loadUserProfileInfo();
+            loadSavedTheme();
+            startPolling();
+        }
+
+        function logout() {
+            localStorage.removeItem('mirror_user');
+            document.getElementById('main-screen').classList.remove('active');
+            document.getElementById('auth-screen').classList.add('active');
+        }
+
+        function switchTab(tabName, element) {
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+
+            if (tabName === 'chats') {
+                document.getElementById('tab-chats').classList.add('active');
+                document.getElementById('app-title').innerText = "Чати";
+            } else if (tabName === 'contacts') {
+                document.getElementById('tab-contacts').classList.add('active');
+                document.getElementById('app-title').innerText = "Спілкування";
+            } else if (tabName === 'settings') {
+                document.getElementById('tab-settings').classList.add('active');
+                document.getElementById('app-title').innerText = "Налаштування";
+                loadUserProfileInfo();
+            }
+        }
+
+        function openChat(chatId, chatName) {
+            activeChatId = chatId;
+            document.getElementById('room-title').innerText = chatName;
+            document.getElementById('main-screen').classList.remove('active');
+            document.getElementById('chat-room-screen').classList.add('active');
+            loadRoomMessages();
         }
 
         function closeChat() {
