@@ -22,16 +22,13 @@ jobs:
       run: |
         npm init -y
         npm install @capacitor/core@latest @capacitor/cli@latest @capacitor/ios@latest
-        
-        # Створюємо папку www для вебсторінок, якщо її немає
         mkdir -p www
         if [ -f "index.html" ]; then cp index.html www/; fi
-        
         npx cap init Mirror com.mirror.messenger --web-dir www
         npx cap add ios
 
     - name: Build iOS project (Xcode)
       run: |
-        cd ios/App
+        cd ios
         xcodebuild -workspace App.xcworkspace -scheme App -configuration Release -destination 'generic/platform=iOS' -archivePath build/App.xcarchive archive
         
