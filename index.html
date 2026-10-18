@@ -261,7 +261,7 @@
             const container = document.getElementById("users-list-container");
             container.innerHTML = '<div style="color: #8e9297; font-size: 14px;">Завантаження...</div>';
             try {
-                const response = await fetch(`${SERVER_URL}/users`);
+                const SERVER_URL = "https://mirror-messenger.onrender.com";
                 const users = await response.json();
                 
                 if (users.length === 0) {
